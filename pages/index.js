@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import factory from '../ethereum/factory';
 import { Card, Button } from 'semantic-ui-react';
 import Layout from "../components/Layout";
+import Link from 'next/link';
 
 const Home = (props)=>{
 
@@ -9,7 +10,11 @@ const Home = (props)=>{
 		const items = props.campaigns.map(address=>{
 			return {
 				header: address,
-				description: <a>View Campaign</a>,
+				description: (
+					<Link href="/campaigns/[address]" as={`/campaigns/${address}`}>
+						<a>View Campaign</a>
+					</Link>
+				),
 				fluid: true
 			}
 		});
@@ -20,14 +25,17 @@ const Home = (props)=>{
 	return(
 		<Layout>
 		<div>
-			<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css" />
 			<h1>Campaign list</h1>
-			{ renderCampaigns() }
+
+			<Link href="/campaigns/new">
 			<Button
+			  floated="right"
 			  content="Create Campaign"
 			  icon="add circle"
 			  primary
 			/>
+			</Link>
+			{ renderCampaigns() }
 		</div>
 		</Layout>
 	)

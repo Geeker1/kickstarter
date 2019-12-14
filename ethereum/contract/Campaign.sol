@@ -4,8 +4,8 @@ pragma solidity ^0.4.17;
 contract CampaignFactory{
     address[] public deployedCampaigns;
 
-    function createCampaign(uint minimum) public{
-        address newCampaign = new Campaign(minimum, msg.sender);
+    function createCampaign(uint minimum, string image) public{
+        address newCampaign = new Campaign(minimum, msg.sender, image);
         deployedCampaigns.push(newCampaign);
     }
 
@@ -28,8 +28,9 @@ contract Campaign{
     Request[] public requests;
     address public manager;
     uint public minimumContribution;
+    string public image;
     mapping(address => bool) public approvers;
-    uint approversCount = 0;
+    uint public approversCount;
 
 
     modifier restricted(){
@@ -37,10 +38,14 @@ contract Campaign{
         _;
     }
 
-    function Campaign(uint minimum, address creator) public{
+    function Campaign(uint minimum, address creator, string image) public{
         manager = creator;
         minimumContribution = minimum;
+        image = image;
     }
+
+    // A little bug in contribute function that shows up
+    // in the react side and obsructs my code
 
     function contribute() public payable{
         require(msg.value > minimumContribution);
@@ -81,6 +86,24 @@ contract Campaign{
         request.recipient.transfer(request.value);
         request.complete = true;
     }
+
+    function getSummary() public view returns (
+        uint, uint, uint, uint, address
+        ){
+        return (
+            minimumContribution,
+            this.balance,
+            requests.length,
+            approversCount,
+            manager
+        );
+    }
+
+    function getRequestsCount() public view returns (uint){
+        return requests.length;
+    }
+
 }
+
 
 
